@@ -19,6 +19,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
+                    view.evaluateJavascript("javascript:setTimeout(()=>{console.log(\"IFTC所有\");console.log(\"IFTC工作室室长QQ：3164417130\");},200)", null);
                 }
             });
         webView.loadUrl("file:///android_asset/index.html");
@@ -189,11 +191,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 } else if (type.equals("keepScreenOff")) {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                } else if(type.equals("notification")){
+                } else if (type.equals("notification")) {
                     ArrayList r = new ArrayList();
                     if (getIntent().getAction() != null && getIntent().getAction().equals(message[0])) {
                         sendResponse(callback, r);
                     }
+                } else if (type.equals("getScreenBright")) {
+                    WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+                    float currentBrightness = layoutParams.screenBrightness;
+                    if (currentBrightness == -1) {
+                        try {
+                            currentBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS) / 255f;
+                        } catch (Settings.SettingNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    ArrayList r = new ArrayList();
+                    r.add(currentBrightness);
+                    sendResponse(callback, r);
+                } else if(type.equals("setScreenBright")){
+                    WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+                    layoutParams.screenBrightness = Float.parseFloat(message[0]);
+                    getWindow().setAttributes(layoutParams);
                 }
             }
         };
