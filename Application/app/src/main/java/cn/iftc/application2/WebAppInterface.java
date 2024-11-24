@@ -1,17 +1,25 @@
 package cn.iftc.application2;
 
-import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.Base64;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
+import androidx.core.app.NotificationCompat;
 import cn.iftc.application2.BuildConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,9 +34,12 @@ import java.util.ArrayList;
 public class WebAppInterface {
     private Context mContext;
     private WeakReference<MainActivity> activityRef;
+    private NotificationManager notificationManager;
     WebAppInterface(Context c, MainActivity activity) {
         mContext = c;
         this.activityRef = new WeakReference<>(activity);
+        notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        createNotificationChannel("default", "默认频道");
     }
     public void sendMessage(String type, String callback, String[] message) {
         Intent intent = new Intent("iftc");
@@ -270,11 +281,111 @@ public class WebAppInterface {
         sendMessage("checkStoragePermission", callback, new String[]{});
     }
     @JavascriptInterface
-    public void getClipboard(String callback) {
-        sendMessage("getClipboard", callback, new String[]{});
-    }
-    @JavascriptInterface
     public String getAndroidID() {
         return Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+    @JavascriptInterface
+    public void browser(String Url) {
+        sendMessage("browser", "", new String[]{Url});
+    }
+    @JavascriptInterface
+    public void toAPPInfoPage(String packageName) {
+        sendMessage("toAPPInfoPage", "", new String[]{packageName});
+    }
+    @JavascriptInterface
+    public void toSettings() {
+        sendMessage("toSettings", "", new String[]{});
+    }
+    @JavascriptInterface
+    public void clipboardWriteText(String label, String text) {
+        ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(label, text);
+        clipboard.setPrimaryClip(clip);
+    }
+    @JavascriptInterface
+    public String clipboardReadText() {
+        ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+            ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+            String text = item.getText().toString();
+            Log.d("Clipboard", "Copied Text: " + text);
+            return text;
+        }
+        return null;
+    }
+    @JavascriptInterface
+    public String getDeviceName() {
+        return Build.MODEL;
+    }
+    @JavascriptInterface
+    public String getDeviceMac() {
+        WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager != null) {
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            if (wifiInfo != null) {
+                return wifiInfo.getMacAddress();
+            }
+        }
+        return null;
+    }
+    @JavascriptInterface
+    public void createNotificationChannel(String name, String description) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = name;
+            CharSequence channelName = description;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+    @JavascriptInterface
+    public void sendBasicNotification(int id, String channel, String actionName, String title, String contentText, boolean autoCancel) {
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.setAction(actionName);
+        intent.putExtra("id", id);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(contentText)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(autoCancel);
+        notificationManager.notify(id, builder.build());
+        sendMessage("notification", actionName, new String[]{id + "", channel, actionName, title, contentText});
+    }
+    @JavascriptInterface
+    public void sendProgressNotification(int id, String channel, String title, String contentText, boolean ongoing, int progress) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(contentText)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOngoing(ongoing)
+            .setProgress(100, progress, false);
+        notificationManager.notify(id, builder.build());
+    }
+    @JavascriptInterface
+    public void sendBigTextNotification(int id, String channel, String bigText, String bigContentText, String summaryText, String contentText, String title, boolean autoCancel) {
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
+            .bigText(bigText)
+            .setBigContentTitle(bigContentText)
+            .setSummaryText(summaryText);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(contentText)
+            .setStyle(bigTextStyle)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(autoCancel);
+        notificationManager.notify(id, builder.build());
+    }
+    @JavascriptInterface
+    public void keepScreenOn() {
+        sendMessage("keepScreenOn", "", new String[]{});
+    }
+    @JavascriptInterface
+    public void keepScreenOff() {
+        sendMessage("keepScreenOff", "", new String[]{});
     }
 }

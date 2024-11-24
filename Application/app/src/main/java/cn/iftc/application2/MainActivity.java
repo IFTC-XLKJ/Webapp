@@ -10,12 +10,15 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -31,7 +34,7 @@ import androidx.core.R;
 import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private Activity activity;
     private Context mContext;
     private WebView webView;
@@ -40,12 +43,16 @@ public class MainActivity extends AppCompatActivity {
     private ValueCallback<Uri[]> mFilePathCallback;
     private boolean mHasResultBeenCalled = false;
     private static final int FILE_CHOOSER_RESULT_CODE = 100;
+    private SensorManager sensorManager;
+    private Sensor lightSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         activity = this;
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         Window window = getWindow();
         View view = getWindow().getDecorView();
         int option = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
@@ -165,10 +172,33 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList r = new ArrayList();
                     r.add(checkStoragePermission());
                     sendResponse(callback, r);
+                } else if (type.equals("browser")) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(message[0]));
+                    startActivity(i);
+                } else if (type.equals("toAPPInfoPage")) {
+                    Intent i = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", message[0], null);
+                    i.setData(uri);
+                    startActivity(i);
+                } else if (type.equals("toSettings")) {
+                    Intent i = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                } else if (type.equals("keepScreenOn")) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                } else if (type.equals("keepScreenOff")) {
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                } else if(type.equals("notification")){
+                    ArrayList r = new ArrayList();
+                    if (getIntent().getAction() != null && getIntent().getAction().equals(message[0])) {
+                        sendResponse(callback, r);
+                    }
                 }
             }
         };
         registerReceiver(messageReceiver, new IntentFilter("iftc"));
+
     }
 
     private void sendResponse(String callback, ArrayList response) {
@@ -248,5 +278,32 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     }
-    
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+            float lux = event.values[0];
+            ArrayList r = new ArrayList();
+            r.add(lux);
+            sendResponse("onDeviceLight", r);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // 传感器精度改变时调用
+    }
+
 }
