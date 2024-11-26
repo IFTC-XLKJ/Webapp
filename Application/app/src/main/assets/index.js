@@ -1,4 +1,7 @@
-window.a;
+window.a1;
+window.b1;
+window.c1;
+window.d1;
 onload = () => {
     eruda.init();
     console.log(iftc);
@@ -6,8 +9,8 @@ onload = () => {
     console.log("版权：", iftc.copyright())
     console.log("Base64转文本(UTF-8)", iftc.Base64ToContent("SUZUQyBXZWJhcHAKSUZUQ+e9kemhteW6lOeUqA=="))
     console.log("文本转Base64(UTF-8)", iftc.ContentToBase64("IFTC Webapp\nIFTC网页应用"))
-    iftc.showToast("短时间Toast提示", false)
-    iftc.showToast("长时间Toast提示", true)
+    //iftc.showToast("短时间Toast提示", false)
+    //iftc.showToast("长时间Toast提示", true)
     console.log("应用名：", iftc.appName())
     console.log("包名：", iftc.packageName())
     console.log("版本名：", iftc.verName())
@@ -44,6 +47,19 @@ onload = () => {
     iftc.isVpn("isVpn")
     iftc.checkStoragePermission("checkStoragePermission")
     iftc.server(8081, "/storage/emulated/0/", "")
+    iftc.sendBasicNotification(0, 'b', '114514', '114514', true)
+    iftc.sendProgressNotification(1, 'c', '114514', '114514', true, 50)
+    iftc.sendImageNotification(2, 'd', '114514', '114514', 'http://localhost:8081/IFTC_ba.jpg', true)
+
+    b1 = e => {
+        console.log('Basic', e)
+    }
+    c1 = e => {
+        console.log('Progress', e)
+    }
+    d1 = e => {
+        console.log('Image', e)
+    }
 
     a1 = e => {
         a.innerHTML = "环境亮度：" + e[0] + "流明"
@@ -62,5 +78,26 @@ function onDeviceLight(e) {
     console.log(e[0], "流明")
     try {
         a1(e)
+    } catch (e) {}
+}
+
+function b(e) {
+    console.log(e)
+    try {
+        b1(e)
+    } catch (e) {}
+}
+
+function c(e) {
+    console.log(e)
+    try {
+        c1(e)
+    } catch (e) {}
+}
+
+function d(e) {
+    console.log(e)
+    try {
+        d1(e)
     } catch (e) {}
 }
