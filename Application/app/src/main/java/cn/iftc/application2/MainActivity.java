@@ -2,6 +2,9 @@ package cn.iftc.application2;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Context;
@@ -9,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -18,6 +22,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -32,8 +37,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.R;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private Activity activity;
@@ -46,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int FILE_CHOOSER_RESULT_CODE = 100;
     private SensorManager sensorManager;
     private Sensor lightSensor;
+    private String CHANNEL_ID = "IFTC_Webapp";
+    private BroadcastReceiver notificationReceive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,11 +203,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 } else if (type.equals("keepScreenOff")) {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                } else if (type.equals("notification")) {
-                    ArrayList r = new ArrayList();
-                    if (getIntent().getAction() != null && getIntent().getAction().equals(message[0])) {
-                        sendResponse(callback, r);
-                    }
                 } else if (type.equals("getScreenBright")) {
                     WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
                     float currentBrightness = layoutParams.screenBrightness;
@@ -209,17 +216,87 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     ArrayList r = new ArrayList();
                     r.add(currentBrightness);
                     sendResponse(callback, r);
-                } else if(type.equals("setScreenBright")){
+                } else if (type.equals("setScreenBright")) {
                     WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
                     layoutParams.screenBrightness = Float.parseFloat(message[0]);
                     getWindow().setAttributes(layoutParams);
+                } else if (type.equals("sendBasicNotification")) {
+                    createNotificationChannel(mContext);
+                    Intent i = new Intent(mContext, MainActivity.class);
+                    i.setAction(callback);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(message[1])
+                        .setContentText(message[2])
+                        .setOngoing(Boolean.parseBoolean(message[3]))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent);
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(Integer.parseInt(message[0]), builder.build());
+                } else if (type.equals("sendProgressNotification")) {
+                    createNotificationChannel(mContext);
+                    Intent i = new Intent(mContext, MainActivity.class);
+                    i.setAction(callback);
+                    i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(message[1])
+                        .setContentText(message[2])
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
+                        .setOngoing(Boolean.parseBoolean(message[3]))
+                        .setProgress(100, Integer.parseInt(message[4]), false)
+                        .setContentIntent(pendingIntent);
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(Integer.parseInt(message[0]) , builder.build());
+                } else if (type.equals("sendImageNotification")) {
+                    final String actionName = callback;
+                    final int id = Integer.parseInt(message[0]);
+                    final String title = message[1];
+                    final String contentText = message[2];
+                    final String url = message[3];
+                    final boolean ongoing = Boolean.parseBoolean(message[4]);
+                    Toast.makeText(mContext, "参数获取完成", Toast.LENGTH_LONG);
+                    new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Bitmap bitmap = getBitmapFromURL(url);
+                                if (bitmap != null) {
+                                    createNotificationChannel(mContext);
+                                    Intent i = new Intent(mContext, MainActivity.class);
+                                    i.setAction(actionName);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
+                                        .setSmallIcon(R.mipmap.ic_launcher)
+                                        .setContentTitle(title)
+                                        .setContentText(contentText)
+                                        .setOngoing(ongoing)
+                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                        .setContentIntent(pendingIntent)
+                                        .setStyle(new NotificationCompat.BigPictureStyle()
+                                                  .bigPicture(bitmap)
+                                                  .bigLargeIcon(bitmap));
+                                    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                    notificationManager.notify(id, builder.build());
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(mContext, "图片无法加载，请检查图片URL是否正确再发送图片通知", Toast.LENGTH_LONG).show();
+                                                Log.e("Notification", "Failed to download image");
+                                            }
+                                        });
+                                }
+                            }
+                        }).start();
                 }
             }
         };
         registerReceiver(messageReceiver, new IntentFilter("iftc"));
-
+        handleIntent(getIntent(), getIntent().getAction());
     }
-
     private void sendResponse(String callback, ArrayList response) {
         Log.d("resp", response.toString());
         webView.evaluateJavascript("javascript:try{" + callback + "(" + response.toString() + ")}catch(e){};", null);
@@ -277,6 +354,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return super.onKeyDown(keyCode, event);
     }
 
+    private void handleIntent(Intent intent, String actionName) {
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(actionName)) {
+            ArrayList r = new ArrayList();
+            sendResponse(actionName, r);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent, intent.getAction());
+    }
+
     public boolean isvpn() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(mContext.CONNECTIVITY_SERVICE);
         Network activeNetwork = connectivityManager.getActiveNetwork();
@@ -323,6 +414,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // 传感器精度改变时调用
+    }
+    private void createNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "IFTC Webapp";
+            String description = "此通知由Webapp发出";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = mContext.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            return BitmapFactory.decodeStream(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

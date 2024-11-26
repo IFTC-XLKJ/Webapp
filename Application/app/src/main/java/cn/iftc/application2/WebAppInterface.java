@@ -20,6 +20,7 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import cn.iftc.application2.BuildConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,12 +35,10 @@ import java.util.ArrayList;
 public class WebAppInterface {
     private Context mContext;
     private WeakReference<MainActivity> activityRef;
-    private NotificationManager notificationManager;
+    private String CHANNEL_ID = "IFTC_Webapp";
     WebAppInterface(Context c, MainActivity activity) {
         mContext = c;
         this.activityRef = new WeakReference<>(activity);
-        notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        createNotificationChannel("default", "默认频道");
     }
     public void sendMessage(String type, String callback, String[] message) {
         Intent intent = new Intent("iftc");
@@ -328,57 +327,58 @@ public class WebAppInterface {
         }
         return null;
     }
+    private void createNotificationChannel(String name, String description) {
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+        NotificationManager notificationManager = mContext.getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
     @JavascriptInterface
-    public void createNotificationChannel(String name, String description) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelId = name;
-            CharSequence channelName = description;
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
-            notificationManager.createNotificationChannel(channel);
+    public void sendBasicNotification(int id, String actionName, String title, String contentText, boolean ongoing) {
+        sendMessage("sendBasicNotification", actionName, new String[]{id + "", title, contentText, ongoing + ""});
+    }
+    @JavascriptInterface
+    public void sendProgressNotification(int id, String actionName, String title, String contentText, boolean ongoing, int progress) {
+        sendMessage("sendProgressNotification", actionName, new String[]{id + "", title, contentText, ongoing + "", progress + ""});
+    }
+    @JavascriptInterface
+    public void sendImageNotification(int id, String actionName, String title, String contentText, String url, boolean ongoing) {
+        sendMessage("sendImageNotification", actionName, new String[]{id + "", title, contentText, url, ongoing + ""});
+    }
+    /*@JavascriptInterface
+     public void sendBigTextNotification(int id, String channel, String actionName, String bigText, String bigContentText, String summaryText, String contentText, String title) {
+     Intent intent = new Intent(mContext, MainActivity.class);
+     intent.setAction(actionName);
+     intent.putExtra("id", id);
+     intent.putExtra("type", "notify");
+     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+     PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+     NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
+     .bigText(bigText)
+     .setBigContentTitle(bigContentText)
+     .setSummaryText(summaryText);
+     NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
+     .setSmallIcon(R.mipmap.ic_launcher)
+     .setContentTitle(title)
+     .setContentText(contentText)
+     .setStyle(bigTextStyle)
+     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+     .setContentIntent(pendingIntent);
+     notificationManager.notify(id, builder.build());
+     sendMessage("notification", actionName, new String[]{id + "", channel});
+     }*/
+    @JavascriptInterface
+    public void cancelNotification(int id) {
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancel(id);
         }
     }
     @JavascriptInterface
-    public void sendBasicNotification(int id, String channel, String actionName, String title, String contentText, boolean autoCancel) {
-        Intent intent = new Intent(mContext, MainActivity.class);
-        intent.setAction(actionName);
-        intent.putExtra("id", id);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(title)
-            .setContentText(contentText)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(autoCancel);
-        notificationManager.notify(id, builder.build());
-        sendMessage("notification", actionName, new String[]{id + "", channel, actionName, title, contentText});
-    }
-    @JavascriptInterface
-    public void sendProgressNotification(int id, String channel, String title, String contentText, boolean ongoing, int progress) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(title)
-            .setContentText(contentText)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setOngoing(ongoing)
-            .setProgress(100, progress, false);
-        notificationManager.notify(id, builder.build());
-    }
-    @JavascriptInterface
-    public void sendBigTextNotification(int id, String channel, String bigText, String bigContentText, String summaryText, String contentText, String title, boolean autoCancel) {
-        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
-            .bigText(bigText)
-            .setBigContentTitle(bigContentText)
-            .setSummaryText(summaryText);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(title)
-            .setContentText(contentText)
-            .setStyle(bigTextStyle)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(autoCancel);
-        notificationManager.notify(id, builder.build());
+    public void cancelAllNotification() {
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
     @JavascriptInterface
     public void keepScreenOn() {
@@ -388,4 +388,13 @@ public class WebAppInterface {
     public void keepScreenOff() {
         sendMessage("keepScreenOff", "", new String[]{});
     }
+    @JavascriptInterface
+    public void getScreenBright(String callback) {
+        sendMessage("getScreenBright", callback, new String[]{});
+    }
+    @JavascriptInterface
+    public void setScreenBright(float value) {
+        sendMessage("setScreenBright", "", new String[]{value + ""});
+    }
+
 }
