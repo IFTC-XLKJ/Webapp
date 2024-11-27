@@ -2,6 +2,7 @@ window.a1;
 window.b1;
 window.c1;
 window.d1;
+window.e1;
 onload = () => {
     eruda.init();
     console.log(iftc);
@@ -9,8 +10,8 @@ onload = () => {
     console.log("版权：", iftc.copyright())
     console.log("Base64转文本(UTF-8)", iftc.Base64ToContent("SUZUQyBXZWJhcHAKSUZUQ+e9kemhteW6lOeUqA=="))
     console.log("文本转Base64(UTF-8)", iftc.ContentToBase64("IFTC Webapp\nIFTC网页应用"))
-    //iftc.showToast("短时间Toast提示", false)
-    //iftc.showToast("长时间Toast提示", true)
+        //iftc.showToast("短时间Toast提示", false)
+        //iftc.showToast("长时间Toast提示", true)
     console.log("应用名：", iftc.appName())
     console.log("包名：", iftc.packageName())
     console.log("版本名：", iftc.verName())
@@ -50,6 +51,7 @@ onload = () => {
     iftc.sendBasicNotification(0, 'b', '114514', '114514', true)
     iftc.sendProgressNotification(1, 'c', '114514', '114514', true, 50)
     iftc.sendImageNotification(2, 'd', '114514', '114514', 'http://localhost:8081/IFTC_ba.jpg', true)
+    iftc.sendBigTextNotification(3, 'e', '114514', '114514', '114514', '114514', '114514')
 
     b1 = e => {
         console.log('Basic', e)
@@ -59,6 +61,9 @@ onload = () => {
     }
     d1 = e => {
         console.log('Image', e)
+    }
+    e1 = e => {
+        console.log('BigText', e)
     }
 
     a1 = e => {
@@ -99,5 +104,12 @@ function d(e) {
     console.log(e)
     try {
         d1(e)
+    } catch (e) {}
+}
+
+function e(event) {
+    console.log(event)
+    try {
+        e1(event)
     } catch (e) {}
 }
