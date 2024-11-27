@@ -2,7 +2,6 @@ package cn.iftc.application2;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
@@ -19,8 +18,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import cn.iftc.application2.BuildConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -346,39 +343,17 @@ public class WebAppInterface {
     public void sendImageNotification(int id, String actionName, String title, String contentText, String url, boolean ongoing) {
         sendMessage("sendImageNotification", actionName, new String[]{id + "", title, contentText, url, ongoing + ""});
     }
-    /*@JavascriptInterface
-     public void sendBigTextNotification(int id, String channel, String actionName, String bigText, String bigContentText, String summaryText, String contentText, String title) {
-     Intent intent = new Intent(mContext, MainActivity.class);
-     intent.setAction(actionName);
-     intent.putExtra("id", id);
-     intent.putExtra("type", "notify");
-     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-     PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-     NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
-     .bigText(bigText)
-     .setBigContentTitle(bigContentText)
-     .setSummaryText(summaryText);
-     NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channel)
-     .setSmallIcon(R.mipmap.ic_launcher)
-     .setContentTitle(title)
-     .setContentText(contentText)
-     .setStyle(bigTextStyle)
-     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-     .setContentIntent(pendingIntent);
-     notificationManager.notify(id, builder.build());
-     sendMessage("notification", actionName, new String[]{id + "", channel});
-     }*/
+    @JavascriptInterface
+    public void sendBigTextNotification(int id, String actionName, String bigText, String bigContentText, String summaryText, String contentText, String title) {
+        sendMessage("sendBigTextNotification", actionName, new String[]{id + "", bigText, bigContentText, summaryText, contentText, title});
+    }
     @JavascriptInterface
     public void cancelNotification(int id) {
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.cancel(id);
-        }
+        sendMessage("cancelNotification", "", new String[]{id + ""});
     }
     @JavascriptInterface
     public void cancelAllNotification() {
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        sendMessage("cancelAllNotification", "", new String[]{});
     }
     @JavascriptInterface
     public void keepScreenOn() {

@@ -35,6 +35,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.R;
 import androidx.core.app.NotificationCompat;
@@ -43,7 +44,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import android.widget.Toast;
+import cn.iftc.application2.BatteryInfoReceiver;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private Activity activity;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor lightSensor;
     private String CHANNEL_ID = "IFTC_Webapp";
-    private BroadcastReceiver notificationReceive;
+    private BatteryInfoReceiver batteryInfoReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         activity = this;
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        batteryInfoReceiver = new BatteryInfoReceiver();
+        registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         Window window = getWindow();
         View view = getWindow().getDecorView();
         int option = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
@@ -291,6 +294,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 }
                             }
                         }).start();
+                } else if (type.equals("sendBigTextNotification")) {
+                    Intent i = new Intent(mContext, MainActivity.class);
+                    i.setAction(callback);
+                    i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
+                        .bigText(message[1])
+                        .setBigContentTitle(message[2])
+                        .setSummaryText(message[3]);
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(message[5])
+                        .setContentText(message[4])
+                        .setStyle(bigTextStyle)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent);
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(Integer.parseInt(message[0]), builder.build());
+                } else if (type.equals("cancelNotification")) {
+                    int id = Integer.parseInt(message[0]);
+                    NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (notificationManager != null) {
+                        notificationManager.cancel(id);
+                    }
+                } else if (type.equals("cancelAllNotification")) {
+                    NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancelAll();
                 }
             }
         };
