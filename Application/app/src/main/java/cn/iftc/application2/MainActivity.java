@@ -1,19 +1,25 @@
-package cn.iftc.application2;
+package cn.iftc.application;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,7 +32,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,14 +42,16 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.R;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import cn.iftc.application.WebAppInterface;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import cn.iftc.application2.BatteryInfoReceiver;
+import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private Activity activity;
@@ -58,7 +65,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor lightSensor;
     private String CHANNEL_ID = "IFTC_Webapp";
-    private BatteryInfoReceiver batteryInfoReceiver;
+    private String goBackCallback;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private long firstBackTime;
+    private boolean isTwoBack = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         activity = this;
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        batteryInfoReceiver = new BatteryInfoReceiver();
-        registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         Window window = getWindow();
         View view = getWindow().getDecorView();
         int option = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
@@ -78,27 +86,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         window.setStatusBarColor(Color.parseColor("white"));
         setContentView(R.layout.activity_main);
         webView = findViewById(R.id.webview);
+        swipeRefreshLayout = findViewById(R.id.layout);
         webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new WebAppInterface(this, this), "iftc");
-        webView.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                        switch (keyCode) {
-                            case KeyEvent.KEYCODE_BACK:
-                                if (webView.canGoBack()) {
-                                    webView.goBack();
-                                    return true;
-                                } else {
-                                    finish();
-                                }
-                                break;
-                        }
-                    }
-                    return false;
-                }
-            });
+        webView.addJavascriptInterface(new WebAppInterface(this), "iftc");
         webView.setWebChromeClient(new WebChromeClient() {
                 @Override
                 public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
@@ -133,8 +124,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
                     view.evaluateJavascript("javascript:setTimeout(()=>{console.log(\"IFTC所有\");console.log(\"IFTC工作室室长QQ：3164417130\");},200)", null);
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             });
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    webView.reload();
+                }
+            });
+        swipeRefreshLayout.setColorSchemeColors(R.color.swiperefresh);
         webView.loadUrl("file:///android_asset/index.html");
         messageReceiver = new BroadcastReceiver() {
             @Override
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     shareIntent.putExtra(Intent.EXTRA_STREAM, message[0]);
                     startActivity(Intent.createChooser(shareIntent, message[2]));
                 } else if (type.equals("server")) {
-                    LocalServer ls = new LocalServer(mContext, Integer.parseInt(message[0]), message[1], message[2]);
+                    LocalServer ls = new LocalServer(mContext, Integer.parseInt(message[0]), message[1]);
                     new Thread(ls).start();
                 } else if (type.equals("checkStoragePermission")) {
                     ArrayList r = new ArrayList();
@@ -321,15 +320,40 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 } else if (type.equals("cancelAllNotification")) {
                     NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                     notificationManager.cancelAll();
+                } else if (type.equals("goBack")) {
+                    goBackCallback = callback;
+                } else if (type.equals("allowRenew")) {
+                    boolean is = Boolean.parseBoolean(message[0]);
+                    swipeRefreshLayout.setEnabled(is);
+                } else if (type.equals("twoBack")) {
+                    isTwoBack = Boolean.parseBoolean(message[0]);
+                } else if (type.equals("getAPPs")) {
+                    sendResponse(callback, new AppListUtil().getInstalledAppList(mContext));
+                } else if (type.equals("horScreen")) {
+                    if (Boolean.parseBoolean(message[0])) {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    } else {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    }
+                }else if (type.equals("getAPPInfo")){
+                    AppInfoUtil appInfoUtil = new AppInfoUtil();
+                    ArrayList r = new ArrayList();
+                    String packageName = message[0];
+                    r.add("\"" + appInfoUtil.getAppName(mContext, packageName) + "\"");
+                    r.add("\"" + appInfoUtil.getVersionName(mContext, packageName) + "\"");
+                    r.add(appInfoUtil.getVersionCode(mContext, packageName));
+                    sendResponse(callback, r);
                 }
             }
         };
         registerReceiver(messageReceiver, new IntentFilter("iftc"));
         handleIntent(getIntent(), getIntent().getAction());
+
     }
+
     private void sendResponse(String callback, ArrayList response) {
         Log.d("resp", response.toString());
-        webView.evaluateJavascript("javascript:try{" + callback + "(" + response.toString() + ")}catch(e){};", null);
+        webView.evaluateJavascript("javascript:try{" + callback + "(" + response.toString() + ")}catch(e){console.log(e)};", null);
         webView.evaluateJavascript("javascript:console.log(\"" + callback + " 已完成回调\");", null);
     }
 
@@ -376,12 +400,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
-            webView.goBack();
-            return true;
+    public void onBackPressed() {
+        if (goBackCallback == null) {
+            if (webView.canGoBack()) {
+                webView.goBack();
+            } else {
+                if (isTwoBack) {
+                    if (System.currentTimeMillis() - firstBackTime > 2000) {
+                        Toast.makeText(this, "再按一次返回键退出程序", Toast.LENGTH_SHORT).show();
+                        firstBackTime = System.currentTimeMillis();
+                        return;
+                    }
+                }
+                super.onBackPressed();
+            }
+        } else {
+            ArrayList r = new ArrayList();
+            sendResponse(goBackCallback, r);
         }
-        return super.onKeyDown(keyCode, event);
     }
 
     private void handleIntent(Intent intent, String actionName) {
@@ -398,25 +434,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         handleIntent(intent, intent.getAction());
     }
 
-    public boolean isvpn() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(mContext.CONNECTIVITY_SERVICE);
-        Network activeNetwork = connectivityManager.getActiveNetwork();
-        if (activeNetwork != null) {
-            NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
-            if (networkCapabilities != null) {
-                return networkCapabilities.hasTransport(4);
-            }
-        }
-        return false;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
     }
 
-    public boolean checkStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        } else {
-            return true;
-        }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        webView.restoreState(savedInstanceState);
     }
 
     @Override
@@ -445,6 +472,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // 传感器精度改变时调用
     }
+
+    public boolean isvpn() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(mContext.CONNECTIVITY_SERVICE);
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork != null) {
+            NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+            if (networkCapabilities != null) {
+                return networkCapabilities.hasTransport(4);
+            }
+        }
+        return false;
+    }
+
+    public boolean checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "IFTC Webapp";
@@ -471,4 +520,97 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public class AppListUtil {
+        public ArrayList<String> getInstalledAppList(Context context) {
+            PackageManager packageManager = context.getPackageManager();
+            List<ApplicationInfo> apps = packageManager.getInstalledApplications(0);
+            ArrayList<String> appList = new ArrayList<>();
+            for (ApplicationInfo app : apps) {
+                appList.add("\"" + app.packageName + "\"");
+            }
+            return appList;
+        }
+    }
+
+    public class AppInfoUtil {
+
+        /**
+         * 根据包名获取应用信息。
+         *
+         * @param context 上下文
+         * @param packageName 应用的包名
+         * @return 返回包含应用名、版本名、版本号等信息的对象
+         */
+        public PackageInfo getAppInfo(Context context, String packageName) {
+            PackageManager pm = context.getPackageManager();
+            try {
+                // 获取应用的详细信息
+                PackageInfo packageInfo = pm.getPackageInfo(packageName, 0);
+                return packageInfo;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        /**
+         * 获取应用的名字。
+         *
+         * @param context 上下文
+         * @param packageName 应用的包名
+         * @return 应用的名字
+         */
+        public String getAppName(Context context, String packageName) {
+            PackageManager pm = context.getPackageManager();
+            try {
+                ApplicationInfo info = pm.getApplicationInfo(packageName, 0);
+                return (String) pm.getApplicationLabel(info);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        /**
+         * 获取应用的版本名称。
+         *
+         * @param context 上下文
+         * @param packageName 应用的包名
+         * @return 版本名称
+         */
+        public String getVersionName(Context context, String packageName) {
+            PackageManager pm = context.getPackageManager();
+            try {
+                PackageInfo packageInfo = pm.getPackageInfo(packageName, 0);
+                return packageInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        /**
+         * 获取应用的版本号。
+         *
+         * @param context 上下文
+         * @param packageName 应用的包名
+         * @return 版本号
+         */
+        public int getVersionCode(Context context, String packageName) {
+            PackageManager pm = context.getPackageManager();
+            try {
+                PackageInfo packageInfo = pm.getPackageInfo(packageName, 0);
+                // 注意：从Android 8.0（API级别26）开始，应该使用long类型的versionCode
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                    return (int) packageInfo.getLongVersionCode();
+                } else {
+                    return packageInfo.versionCode;
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+    }
+    
 }

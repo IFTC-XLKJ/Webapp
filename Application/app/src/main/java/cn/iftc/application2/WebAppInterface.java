@@ -1,7 +1,5 @@
-package cn.iftc.application2;
+package cn.iftc.application;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
@@ -18,24 +16,22 @@ import android.util.Base64;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
-import cn.iftc.application2.BuildConfig;
+import cn.iftc.application.BuildConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WebAppInterface {
     private Context mContext;
-    private WeakReference<MainActivity> activityRef;
-    private String CHANNEL_ID = "IFTC_Webapp";
-    WebAppInterface(Context c, MainActivity activity) {
+
+    WebAppInterface(Context c) {
         mContext = c;
-        this.activityRef = new WeakReference<>(activity);
     }
     public void sendMessage(String type, String callback, String[] message) {
         Intent intent = new Intent("iftc");
@@ -222,8 +218,8 @@ public class WebAppInterface {
         sendMessage("shareFile", "", new String[]{Url, MimeType, shareTip});
     }
     @JavascriptInterface
-    public void server(int port, String root_path, String options) {
-        sendMessage("server", "", new String[]{port + "", root_path, options});
+    public void server(int port, String root_path) {
+        sendMessage("server", "", new String[]{port + "", root_path});
     }
     @JavascriptInterface
     public String packageName() {
@@ -324,13 +320,6 @@ public class WebAppInterface {
         }
         return null;
     }
-    private void createNotificationChannel(String name, String description) {
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-        channel.setDescription(description);
-        NotificationManager notificationManager = mContext.getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
-    }
     @JavascriptInterface
     public void sendBasicNotification(int id, String actionName, String title, String contentText, boolean ongoing) {
         sendMessage("sendBasicNotification", actionName, new String[]{id + "", title, contentText, ongoing + ""});
@@ -370,6 +359,30 @@ public class WebAppInterface {
     @JavascriptInterface
     public void setScreenBright(float value) {
         sendMessage("setScreenBright", "", new String[]{value + ""});
+    }
+    @JavascriptInterface
+    public void goBack(String callback) {
+        sendMessage("goBack", callback, new String[]{});
+    }
+    @JavascriptInterface
+    public void allowRenew(boolean is) {
+        sendMessage("allowRenew", "", new String[]{is + ""});
+    }
+    @JavascriptInterface
+    public void setRenewColor(String color) {
+        sendMessage("setRenewColor", "", new String[]{color});
+    }
+    @JavascriptInterface
+    public void getAPPs(String callback) {
+        sendMessage("getAPPs", callback, new String[]{});
+    }
+    @JavascriptInterface
+    public void horScreen(boolean is) {
+        sendMessage("horScreen", "", new String[]{is + ""});
+    }
+    @JavascriptInterface
+    public void getAPPInfo(String packageName, String callback) {
+        sendMessage("getAPPInfo", callback, new String[]{packageName});
     }
 
 }
