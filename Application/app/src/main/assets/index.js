@@ -89,6 +89,10 @@ function onDeviceLight(e) {
     } catch (e) {}
 }
 
+function onGravity(e) {
+    console.log(e[0], e[1], e[2])
+}
+
 function b(e) {
     console.log(e)
     try {

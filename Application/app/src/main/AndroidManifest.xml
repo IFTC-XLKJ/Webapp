@@ -1,7 +1,19 @@
 <?xml version='1.0' encoding='utf-8'?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.iftc.application2">
+    package="cn.iftc.application">
+
+    <!-- ACCEPT_HANDOVER -->
+    <uses-permission android:name="android.permission.ACCEPT_HANDOVER"/>
+
+    <!-- 在后台使用位置信息 -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+
+    <!-- ACCESS_BLOBS_ACROSS_USERS -->
+    <uses-permission android:name="android.permission.ACCESS_BLOBS_ACROSS_USERS"/>
+
+    <!-- ACCESS_CHECKIN_PROPERTIES -->
+    <uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES"/>
 
     <!-- 只有在前台运行时才能获取大致位置信息 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -9,47 +21,14 @@
     <!-- 只能在前台获取精确的位置信息 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
-    <!-- 查看网络连接 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- 展开/收拢状态栏 -->
-    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
-
-    <!-- 拥有完全的网络访问权限 -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-
-    <!-- MANAGE_EXTERNAL_STORAGE -->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
-
-    <!-- 读取您共享存储空间中的内容 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-    <!-- 读取手机状态和身份 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-
-    <!-- STATUS_BAR -->
-    <uses-permission android:name="android.permission.STATUS_BAR"/>
-
-    <!-- 修改或删除您共享存储空间中的内容 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <!-- ACCESS_CHECKIN_PROPERTIES -->
-    <uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES"/>
-
-    <!-- ACCESS_BLOBS_ACROSS_USERS -->
-    <uses-permission android:name="android.permission.ACCESS_BLOBS_ACROSS_USERS"/>
-
-    <!-- 在后台使用位置信息 -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-
-    <!-- ACCEPT_HANDOVER -->
-    <uses-permission android:name="android.permission.ACCEPT_HANDOVER"/>
-
     <!-- 获取额外的位置信息提供程序命令 -->
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
 
     <!-- 从您的媒体收藏中读取位置信息 -->
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+
+    <!-- 查看网络连接 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <!-- “勿扰”模式使用权限 -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
@@ -120,23 +99,23 @@
     <!-- BIND_MIDI_DEVICE_SERVICE -->
     <uses-permission android:name="android.permission.BIND_MIDI_DEVICE_SERVICE"/>
 
-    <!-- BIND_NOTIFICATION_LISTENER_SERVICE -->
-    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"/>
-
     <!-- BIND_NFC_SERVICE -->
     <uses-permission android:name="android.permission.BIND_NFC_SERVICE"/>
 
+    <!-- BIND_NOTIFICATION_LISTENER_SERVICE -->
+    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"/>
+
     <!-- BIND_PRINT_SERVICE -->
     <uses-permission android:name="android.permission.BIND_PRINT_SERVICE"/>
-
-    <!-- BIND_REMOTEVIEWS -->
-    <uses-permission android:name="android.permission.BIND_REMOTEVIEWS"/>
 
     <!-- BIND_QUICK_ACCESS_WALLET_SERVICE -->
     <uses-permission android:name="android.permission.BIND_QUICK_ACCESS_WALLET_SERVICE"/>
 
     <!-- BIND_QUICK_SETTINGS_TILE -->
     <uses-permission android:name="android.permission.BIND_QUICK_SETTINGS_TILE"/>
+
+    <!-- BIND_REMOTEVIEWS -->
+    <uses-permission android:name="android.permission.BIND_REMOTEVIEWS"/>
 
     <!-- BIND_SCREENING_SERVICE -->
     <uses-permission android:name="android.permission.BIND_SCREENING_SERVICE"/>
@@ -183,17 +162,449 @@
     <!-- BLUETOOTH_PRIVILEGED -->
     <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"/>
 
+    <!-- 发现附近的蓝牙设备并与其配对 -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+
     <!-- 访问身体传感器（如心率监测器） -->
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
 
     <!-- BODY_SENSORS_BACKGROUND -->
     <uses-permission android:name="android.permission.BODY_SENSORS_BACKGROUND"/>
 
-    <!-- 发现附近的蓝牙设备并与其配对 -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <!-- BROADCAST_PACKAGE_REMOVED -->
+    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_REMOVED"/>
 
-    <!-- WRITE_VOICEMAIL -->
-    <uses-permission android:name="com.android.voicemail.permission.WRITE_VOICEMAIL"/>
+    <!-- BROADCAST_SMS -->
+    <uses-permission android:name="android.permission.BROADCAST_SMS"/>
+
+    <!-- 发送持久广播 -->
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+
+    <!-- BROADCAST_WAP_PUSH -->
+    <uses-permission android:name="android.permission.BROADCAST_WAP_PUSH"/>
+
+    <!-- 查看并控制通过系统拨打的电话。 -->
+    <uses-permission android:name="android.permission.CALL_COMPANION_APP"/>
+
+    <!-- 拨打电话 -->
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
+    <!-- CALL_PRIVILEGED -->
+    <uses-permission android:name="android.permission.CALL_PRIVILEGED"/>
+
+    <!-- 拍摄照片和视频 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- CAPTURE_AUDIO_OUTPUT -->
+    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT"/>
+
+    <!-- CHANGE_COMPONENT_ENABLED_STATE -->
+    <uses-permission android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"/>
+
+    <!-- CHANGE_CONFIGURATION -->
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
+
+    <!-- 更改网络连接性 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+
+    <!-- 允许接收WLAN多播 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+
+    <!-- 连接WLAN网络和断开连接 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
+    <!-- CLEAR_APP_CACHE -->
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
+
+    <!-- CONTROL_LOCATION_UPDATES -->
+    <uses-permission android:name="android.permission.CONTROL_LOCATION_UPDATES"/>
+
+    <!-- DELETE_CACHE_FILES -->
+    <uses-permission android:name="android.permission.DELETE_CACHE_FILES"/>
+
+    <!-- DELETE_PACKAGES -->
+    <uses-permission android:name="android.permission.DELETE_PACKAGES"/>
+
+    <!-- DELIVER_COMPANION_MESSAGES -->
+    <uses-permission android:name="android.permission.DELIVER_COMPANION_MESSAGES"/>
+
+    <!-- DIAGNOSTIC -->
+    <uses-permission android:name="android.permission.DIAGNOSTIC"/>
+
+    <!-- 停用屏幕锁定 -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+
+    <!-- DUMP -->
+    <uses-permission android:name="android.permission.DUMP"/>
+
+    <!-- 展开/收拢状态栏 -->
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+
+    <!-- FACTORY_TEST -->
+    <uses-permission android:name="android.permission.FACTORY_TEST"/>
+
+    <!-- 运行前台服务 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <!-- 查找设备上的帐号 -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
+    <!-- GET_ACCOUNTS_PRIVILEGED -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS_PRIVILEGED"/>
+
+    <!-- 计算应用存储空间 -->
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
+
+    <!-- 检索正在运行的应用 -->
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+
+    <!-- GLOBAL_SEARCH -->
+    <uses-permission android:name="android.permission.GLOBAL_SEARCH"/>
+
+    <!-- HIDE_OVERLAY_WINDOWS -->
+    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS"/>
+
+    <!-- 以高采样率访问传感器数据 -->
+    <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
+
+    <!-- INSTALL_LOCATION_PROVIDER -->
+    <uses-permission android:name="android.permission.INSTALL_LOCATION_PROVIDER"/>
+
+    <!-- INSTALL_PACKAGES -->
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES"/>
+
+    <!-- 安装快捷方式 -->
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+
+    <!-- INSTANT_APP_FOREGROUND_SERVICE -->
+    <uses-permission android:name="android.permission.INSTANT_APP_FOREGROUND_SERVICE"/>
+
+    <!-- INTERACT_ACROSS_PROFILES -->
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_PROFILES"/>
+
+    <!-- 拥有完全的网络访问权限 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- 关闭其他应用 -->
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+
+    <!-- LAUNCH_MULTI_PANE_SETTINGS_DEEP_LINK -->
+    <uses-permission android:name="android.permission.LAUNCH_MULTI_PANE_SETTINGS_DEEP_LINK"/>
+
+    <!-- LOADER_USAGE_STATS -->
+    <uses-permission android:name="android.permission.LOADER_USAGE_STATS"/>
+
+    <!-- LOCATION_HARDWARE -->
+    <uses-permission android:name="android.permission.LOCATION_HARDWARE"/>
+
+    <!-- MANAGE_DOCUMENTS -->
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
+
+    <!-- MANAGE_EXTERNAL_STORAGE -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+
+    <!-- MANAGE_MEDIA -->
+    <uses-permission android:name="android.permission.MANAGE_MEDIA"/>
+
+    <!-- 管理正在进行的通话 -->
+    <uses-permission android:name="android.permission.MANAGE_ONGOING_CALLS"/>
+
+    <!-- 通过系统转接来电 -->
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS"/>
+
+    <!-- MANAGE_WIFI_INTERFACES -->
+    <uses-permission android:name="android.permission.MANAGE_WIFI_INTERFACES"/>
+
+    <!-- MANAGE_WIFI_NETWORK_SELECTION -->
+    <uses-permission android:name="android.permission.MANAGE_WIFI_NETWORK_SELECTION"/>
+
+    <!-- MASTER_CLEAR -->
+    <uses-permission android:name="android.permission.MASTER_CLEAR"/>
+
+    <!-- MEDIA_CONTENT_CONTROL -->
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
+
+    <!-- 更改您的音频设置 -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
+    <!-- MODIFY_PHONE_STATE -->
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE"/>
+
+    <!-- MOUNT_FORMAT_FILESYSTEMS -->
+    <uses-permission android:name="android.permission.MOUNT_FORMAT_FILESYSTEMS"/>
+
+    <!-- MOUNT_UNMOUNT_FILESYSTEMS -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+
+    <!-- NEARBY_WIFI_DEVICES -->
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"/>
+
+    <!-- 控制近距离通信 -->
+    <uses-permission android:name="android.permission.NFC"/>
+
+    <!-- 首选 NFC 付款服务信息 -->
+    <uses-permission android:name="android.permission.NFC_PREFERRED_PAYMENT_INFO"/>
+
+    <!-- NFC_TRANSACTION_EVENT -->
+    <uses-permission android:name="android.permission.NFC_TRANSACTION_EVENT"/>
+
+    <!-- OVERRIDE_WIFI_CONFIG -->
+    <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG"/>
+
+    <!-- PACKAGE_USAGE_STATS -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"/>
+
+    <!-- 让应用始终运行 -->
+    <uses-permission android:name="android.permission.PERSISTENT_ACTIVITY"/>
+
+    <!-- POST_NOTIFICATIONS -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- 重新设置外拨电话的路径 -->
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+
+    <!-- 查询所有软件包 -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+
+    <!-- READ_ASSISTANT_APP_SEARCH_DATA -->
+    <uses-permission android:name="android.permission.READ_ASSISTANT_APP_SEARCH_DATA"/>
+
+    <!-- READ_BASIC_PHONE_STATE -->
+    <uses-permission android:name="android.permission.READ_BASIC_PHONE_STATE"/>
+
+    <!-- 读取日历活动和详情 -->
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+
+    <!-- 读取通话记录 -->
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+
+    <!-- 读取联系人 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
+    <!-- 读取您共享存储空间中的内容 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <!-- READ_HOME_APP_SEARCH_DATA -->
+    <uses-permission android:name="android.permission.READ_HOME_APP_SEARCH_DATA"/>
+
+    <!-- READ_INPUT_STATE -->
+    <uses-permission android:name="android.permission.READ_INPUT_STATE"/>
+
+    <!-- READ_LOGS -->
+    <uses-permission android:name="android.permission.READ_LOGS"/>
+
+    <!-- READ_MEDIA_AUDIO -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+
+    <!-- READ_MEDIA_IMAGES -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+    <!-- READ_MEDIA_VIDEO -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+
+    <!-- READ_NEARBY_STREAMING_POLICY -->
+    <uses-permission android:name="android.permission.READ_NEARBY_STREAMING_POLICY"/>
+
+    <!-- 读取电话号码 -->
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
+
+    <!-- 读取手机状态和身份 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <!-- READ_PRECISE_PHONE_STATE -->
+    <uses-permission android:name="android.permission.READ_PRECISE_PHONE_STATE"/>
+
+    <!-- 读取短信 -->
+    <uses-permission android:name="android.permission.READ_SMS"/>
+
+    <!-- 读取同步设置 -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+
+    <!-- 读取同步统计信息 -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
+
+    <!-- READ_VOICEMAIL -->
+    <uses-permission android:name="com.android.voicemail.permission.READ_VOICEMAIL"/>
+
+    <!-- REBOOT -->
+    <uses-permission android:name="android.permission.REBOOT"/>
+
+    <!-- 开机启动 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- 接收讯息（彩信） -->
+    <uses-permission android:name="android.permission.RECEIVE_MMS"/>
+
+    <!-- 接收讯息（短信） -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+
+    <!-- 接收讯息 (WAP) -->
+    <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH"/>
+
+    <!-- 录音 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!-- 对正在运行的应用重新排序 -->
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
+
+    <!-- REQUEST_COMPANION_PROFILE_APP_STREAMING -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_APP_STREAMING"/>
+
+    <!-- REQUEST_COMPANION_PROFILE_AUTOMOTIVE_PROJECTION -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_AUTOMOTIVE_PROJECTION"/>
+
+    <!-- REQUEST_COMPANION_PROFILE_COMPUTER -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_COMPUTER"/>
+
+    <!-- REQUEST_COMPANION_PROFILE_WATCH -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_WATCH"/>
+
+    <!-- 在后台运行 -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND"/>
+
+    <!-- REQUEST_COMPANION_SELF_MANAGED -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_SELF_MANAGED"/>
+
+    <!-- REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND"/>
+
+    <!-- 在后台使用数据 -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_USE_DATA_IN_BACKGROUND"/>
+
+    <!-- 请求删除文件包 -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+
+    <!-- 请求忽略电池优化 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
+    <!-- 请求安装文件包 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+
+    <!-- REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE -->
+    <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE"/>
+
+    <!-- 请求屏幕锁定复杂度 -->
+    <uses-permission android:name="android.permission.REQUEST_PASSWORD_COMPLEXITY"/>
+
+    <!-- 关闭其他应用 -->
+    <uses-permission android:name="android.permission.RESTART_PACKAGES"/>
+
+    <!-- SCHEDULE_EXACT_ALARM -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
+    <!-- SEND_RESPOND_VIA_MESSAGE -->
+    <uses-permission android:name="android.permission.SEND_RESPOND_VIA_MESSAGE"/>
+
+    <!-- 发送短信 -->
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+
+    <!-- 设置闹钟 -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+
+    <!-- SET_ALWAYS_FINISH -->
+    <uses-permission android:name="android.permission.SET_ALWAYS_FINISH"/>
+
+    <!-- SET_ANIMATION_SCALE -->
+    <uses-permission android:name="android.permission.SET_ANIMATION_SCALE"/>
+
+    <!-- SET_DEBUG_APP -->
+    <uses-permission android:name="android.permission.SET_DEBUG_APP"/>
+
+    <!-- SET_PREFERRED_APPLICATIONS -->
+    <uses-permission android:name="android.permission.SET_PREFERRED_APPLICATIONS"/>
+
+    <!-- SET_PROCESS_LIMIT -->
+    <uses-permission android:name="android.permission.SET_PROCESS_LIMIT"/>
+
+    <!-- SET_TIME -->
+    <uses-permission android:name="android.permission.SET_TIME"/>
+
+    <!-- 设置时区 -->
+    <uses-permission android:name="android.permission.SET_TIME_ZONE"/>
+
+    <!-- 设置壁纸 -->
+    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
+
+    <!-- 调整您的壁纸大小 -->
+    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS"/>
+
+    <!-- SIGNAL_PERSISTENT_PROCESSES -->
+    <uses-permission android:name="android.permission.SIGNAL_PERSISTENT_PROCESSES"/>
+
+    <!-- SMS_FINANCIAL_TRANSACTIONS -->
+    <uses-permission android:name="android.permission.SMS_FINANCIAL_TRANSACTIONS"/>
+
+    <!-- START_FOREGROUND_SERVICES_FROM_BACKGROUND -->
+    <uses-permission android:name="android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND"/>
+
+    <!-- START_VIEW_APP_FEATURES -->
+    <uses-permission android:name="android.permission.START_VIEW_APP_FEATURES"/>
+
+    <!-- 授权使用“查看权限” -->
+    <uses-permission android:name="android.permission.START_VIEW_PERMISSION_USAGE"/>
+
+    <!-- STATUS_BAR -->
+    <uses-permission android:name="android.permission.STATUS_BAR"/>
+
+    <!-- SUBSCRIBE_TO_KEYGUARD_LOCKED_STATE -->
+    <uses-permission android:name="android.permission.SUBSCRIBE_TO_KEYGUARD_LOCKED_STATE"/>
+
+    <!-- 此应用可显示在其他应用上方 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <!-- 发射红外线 -->
+    <uses-permission android:name="android.permission.TRANSMIT_IR"/>
+
+    <!-- 卸载快捷方式 -->
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT"/>
+
+    <!-- UPDATE_DEVICE_STATS -->
+    <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS"/>
+
+    <!-- UPDATE_PACKAGES_WITHOUT_USER_ACTION -->
+    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION"/>
+
+    <!-- use biometric hardware -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+
+    <!-- USE_EXACT_ALARM -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+
+    <!-- use fingerprint hardware -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+
+    <!-- 在锁定的设备上以全屏活动的形式显示通知 -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+
+    <!-- USE_ICC_AUTH_WITH_DEVICE_IDENTIFIER -->
+    <uses-permission android:name="android.permission.USE_ICC_AUTH_WITH_DEVICE_IDENTIFIER"/>
+
+    <!-- 拨打/接听SIP电话 -->
+    <uses-permission android:name="android.permission.USE_SIP"/>
+
+    <!-- 确定附近超宽带设备之间的相对位置 -->
+    <uses-permission android:name="android.permission.UWB_RANGING"/>
+
+    <!-- 控制振动 -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- 防止手机休眠 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- WRITE_APN_SETTINGS -->
+    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS"/>
+
+    <!-- 添加或修改日历活动，并在所有者不知情的情况下向邀请对象发送电子邮件 -->
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
+
+    <!-- 新建/修改/删除通话记录 -->
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
+
+    <!-- 修改您的通讯录 -->
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+
+    <!-- 修改或删除您共享存储空间中的内容 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- WRITE_GSERVICES -->
     <uses-permission android:name="android.permission.WRITE_GSERVICES"/>
@@ -207,414 +618,8 @@
     <!-- 启用和停用同步 -->
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
 
-    <!-- 修改您的通讯录 -->
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
-
-    <!-- 确定附近超宽带设备之间的相对位置 -->
-    <uses-permission android:name="android.permission.UWB_RANGING"/>
-
-    <!-- 控制振动 -->
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
-    <!-- 新建/修改/删除通话记录 -->
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
-
-    <!-- 防止手机休眠 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-
-    <!-- WRITE_APN_SETTINGS -->
-    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS"/>
-
-    <!-- 添加或修改日历活动，并在所有者不知情的情况下向邀请对象发送电子邮件 -->
-    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
-
-    <!-- 拨打/接听SIP电话 -->
-    <uses-permission android:name="android.permission.USE_SIP"/>
-
-    <!-- USE_ICC_AUTH_WITH_DEVICE_IDENTIFIER -->
-    <uses-permission android:name="android.permission.USE_ICC_AUTH_WITH_DEVICE_IDENTIFIER"/>
-
-    <!-- 在锁定的设备上以全屏活动的形式显示通知 -->
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-
-    <!-- USE_EXACT_ALARM -->
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
-
-    <!-- use biometric hardware -->
-    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-
-    <!-- use fingerprint hardware -->
-    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
-
-    <!-- UPDATE_PACKAGES_WITHOUT_USER_ACTION -->
-    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION"/>
-
-    <!-- 发射红外线 -->
-    <uses-permission android:name="android.permission.TRANSMIT_IR"/>
-
-    <!-- UPDATE_DEVICE_STATS -->
-    <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS"/>
-
-    <!-- 卸载快捷方式 -->
-    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT"/>
-
-    <!-- 此应用可显示在其他应用上方 -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-
-    <!-- SUBSCRIBE_TO_KEYGUARD_LOCKED_STATE -->
-    <uses-permission android:name="android.permission.SUBSCRIBE_TO_KEYGUARD_LOCKED_STATE"/>
-
-    <!-- 授权使用“查看权限” -->
-    <uses-permission android:name="android.permission.START_VIEW_PERMISSION_USAGE"/>
-
-    <!-- START_VIEW_APP_FEATURES -->
-    <uses-permission android:name="android.permission.START_VIEW_APP_FEATURES"/>
-
-    <!-- START_FOREGROUND_SERVICES_FROM_BACKGROUND -->
-    <uses-permission android:name="android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND"/>
-
-    <!-- SMS_FINANCIAL_TRANSACTIONS -->
-    <uses-permission android:name="android.permission.SMS_FINANCIAL_TRANSACTIONS"/>
-
-    <!-- SIGNAL_PERSISTENT_PROCESSES -->
-    <uses-permission android:name="android.permission.SIGNAL_PERSISTENT_PROCESSES"/>
-
-    <!-- 设置壁纸 -->
-    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
-
-    <!-- 设置时区 -->
-    <uses-permission android:name="android.permission.SET_TIME_ZONE"/>
-
-    <!-- 调整您的壁纸大小 -->
-    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS"/>
-
-    <!-- SET_TIME -->
-    <uses-permission android:name="android.permission.SET_TIME"/>
-
-    <!-- SET_PROCESS_LIMIT -->
-    <uses-permission android:name="android.permission.SET_PROCESS_LIMIT"/>
-
-    <!-- SET_PREFERRED_APPLICATIONS -->
-    <uses-permission android:name="android.permission.SET_PREFERRED_APPLICATIONS"/>
-
-    <!-- SET_DEBUG_APP -->
-    <uses-permission android:name="android.permission.SET_DEBUG_APP"/>
-
-    <!-- SET_ANIMATION_SCALE -->
-    <uses-permission android:name="android.permission.SET_ANIMATION_SCALE"/>
-
-    <!-- 设置闹钟 -->
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-
-    <!-- 发送短信 -->
-    <uses-permission android:name="android.permission.SEND_SMS"/>
-
-    <!-- SET_ALWAYS_FINISH -->
-    <uses-permission android:name="android.permission.SET_ALWAYS_FINISH"/>
-
-    <!-- 关闭其他应用 -->
-    <uses-permission android:name="android.permission.RESTART_PACKAGES"/>
-
-    <!-- 请求屏幕锁定复杂度 -->
-    <uses-permission android:name="android.permission.REQUEST_PASSWORD_COMPLEXITY"/>
-
-    <!-- REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE -->
-    <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE"/>
-
-    <!-- 请求安装文件包 -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-
-    <!-- 请求忽略电池优化 -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-
-    <!-- 请求删除文件包 -->
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
-
-    <!-- 在后台使用数据 -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_USE_DATA_IN_BACKGROUND"/>
-
-    <!-- REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND"/>
-
-    <!-- REQUEST_COMPANION_SELF_MANAGED -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_SELF_MANAGED"/>
-
-    <!-- 在后台运行 -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND"/>
-
-    <!-- REQUEST_COMPANION_PROFILE_WATCH -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_WATCH"/>
-
-    <!-- REQUEST_COMPANION_PROFILE_COMPUTER -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_COMPUTER"/>
-
-    <!-- REQUEST_COMPANION_PROFILE_AUTOMOTIVE_PROJECTION -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_AUTOMOTIVE_PROJECTION"/>
-
-    <!-- REQUEST_COMPANION_PROFILE_APP_STREAMING -->
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_PROFILE_APP_STREAMING"/>
-
-    <!-- 对正在运行的应用重新排序 -->
-    <uses-permission android:name="android.permission.REORDER_TASKS"/>
-
-    <!-- 接收讯息 (WAP) -->
-    <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH"/>
-
-    <!-- 接收讯息（短信） -->
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
-
-    <!-- 录音 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-
-    <!-- 接收讯息（彩信） -->
-    <uses-permission android:name="android.permission.RECEIVE_MMS"/>
-
-    <!-- READ_VOICEMAIL -->
-    <uses-permission android:name="com.android.voicemail.permission.READ_VOICEMAIL"/>
-
-    <!-- 开机启动 -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-    <!-- REBOOT -->
-    <uses-permission android:name="android.permission.REBOOT"/>
-
-    <!-- 读取同步统计信息 -->
-    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
-
-    <!-- 读取同步设置 -->
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-
-    <!-- 读取短信 -->
-    <uses-permission android:name="android.permission.READ_SMS"/>
-
-    <!-- READ_PRECISE_PHONE_STATE -->
-    <uses-permission android:name="android.permission.READ_PRECISE_PHONE_STATE"/>
-
-    <!-- 读取电话号码 -->
-    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
-
-    <!-- READ_NEARBY_STREAMING_POLICY -->
-    <uses-permission android:name="android.permission.READ_NEARBY_STREAMING_POLICY"/>
-
-    <!-- READ_MEDIA_VIDEO -->
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
-
-    <!-- READ_MEDIA_IMAGES -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-
-    <!-- READ_LOGS -->
-    <uses-permission android:name="android.permission.READ_LOGS"/>
-
-    <!-- READ_MEDIA_AUDIO -->
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
-
-    <!-- READ_INPUT_STATE -->
-    <uses-permission android:name="android.permission.READ_INPUT_STATE"/>
-
-    <!-- READ_HOME_APP_SEARCH_DATA -->
-    <uses-permission android:name="android.permission.READ_HOME_APP_SEARCH_DATA"/>
-
-    <!-- 读取联系人 -->
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-
-    <!-- 读取通话记录 -->
-    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
-
-    <!-- 读取日历活动和详情 -->
-    <uses-permission android:name="android.permission.READ_CALENDAR"/>
-
-    <!-- READ_BASIC_PHONE_STATE -->
-    <uses-permission android:name="android.permission.READ_BASIC_PHONE_STATE"/>
-
-    <!-- READ_ASSISTANT_APP_SEARCH_DATA -->
-    <uses-permission android:name="android.permission.READ_ASSISTANT_APP_SEARCH_DATA"/>
-
-    <!-- 查询所有软件包 -->
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
-
-    <!-- 重新设置外拨电话的路径 -->
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
-
-    <!-- POST_NOTIFICATIONS -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
-    <!-- 让应用始终运行 -->
-    <uses-permission android:name="android.permission.PERSISTENT_ACTIVITY"/>
-
-    <!-- PACKAGE_USAGE_STATS -->
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"/>
-
-    <!-- OVERRIDE_WIFI_CONFIG -->
-    <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG"/>
-
-    <!-- NFC_TRANSACTION_EVENT -->
-    <uses-permission android:name="android.permission.NFC_TRANSACTION_EVENT"/>
-
-    <!-- 首选 NFC 付款服务信息 -->
-    <uses-permission android:name="android.permission.NFC_PREFERRED_PAYMENT_INFO"/>
-
-    <!-- 控制近距离通信 -->
-    <uses-permission android:name="android.permission.NFC"/>
-
-    <!-- NEARBY_WIFI_DEVICES -->
-    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES"/>
-
-    <!-- MOUNT_UNMOUNT_FILESYSTEMS -->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-
-    <!-- MOUNT_FORMAT_FILESYSTEMS -->
-    <uses-permission android:name="android.permission.MOUNT_FORMAT_FILESYSTEMS"/>
-
-    <!-- MODIFY_PHONE_STATE -->
-    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE"/>
-
-    <!-- 通过系统转接来电 -->
-    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS"/>
-
-    <!-- 更改您的音频设置 -->
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-
-    <!-- MANAGE_WIFI_INTERFACES -->
-    <uses-permission android:name="android.permission.MANAGE_WIFI_INTERFACES"/>
-
-    <!-- MEDIA_CONTENT_CONTROL -->
-    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
-
-    <!-- MANAGE_WIFI_NETWORK_SELECTION -->
-    <uses-permission android:name="android.permission.MANAGE_WIFI_NETWORK_SELECTION"/>
-
-    <!-- MASTER_CLEAR -->
-    <uses-permission android:name="android.permission.MASTER_CLEAR"/>
-
-    <!-- 管理正在进行的通话 -->
-    <uses-permission android:name="android.permission.MANAGE_ONGOING_CALLS"/>
-
-    <!-- MANAGE_MEDIA -->
-    <uses-permission android:name="android.permission.MANAGE_MEDIA"/>
-
-    <!-- MANAGE_DOCUMENTS -->
-    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
-
-    <!-- LOCATION_HARDWARE -->
-    <uses-permission android:name="android.permission.LOCATION_HARDWARE"/>
-
-    <!-- LAUNCH_MULTI_PANE_SETTINGS_DEEP_LINK -->
-    <uses-permission android:name="android.permission.LAUNCH_MULTI_PANE_SETTINGS_DEEP_LINK"/>
-
-    <!-- LOADER_USAGE_STATS -->
-    <uses-permission android:name="android.permission.LOADER_USAGE_STATS"/>
-
-    <!-- INTERACT_ACROSS_PROFILES -->
-    <uses-permission android:name="android.permission.INTERACT_ACROSS_PROFILES"/>
-
-    <!-- INSTANT_APP_FOREGROUND_SERVICE -->
-    <uses-permission android:name="android.permission.INSTANT_APP_FOREGROUND_SERVICE"/>
-
-    <!-- 安装快捷方式 -->
-    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
-
-    <!-- INSTALL_PACKAGES -->
-    <uses-permission android:name="android.permission.INSTALL_PACKAGES"/>
-
-    <!-- 关闭其他应用 -->
-    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
-
-    <!-- 检索正在运行的应用 -->
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-
-    <!-- INSTALL_LOCATION_PROVIDER -->
-    <uses-permission android:name="android.permission.INSTALL_LOCATION_PROVIDER"/>
-
-    <!-- GLOBAL_SEARCH -->
-    <uses-permission android:name="android.permission.GLOBAL_SEARCH"/>
-
-    <!-- HIDE_OVERLAY_WINDOWS -->
-    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS"/>
-
-    <!-- 以高采样率访问传感器数据 -->
-    <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
-
-    <!-- 计算应用存储空间 -->
-    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
-
-    <!-- 运行前台服务 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-
-    <!-- 查找设备上的帐号 -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-
-    <!-- GET_ACCOUNTS_PRIVILEGED -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS_PRIVILEGED"/>
-
-    <!-- FACTORY_TEST -->
-    <uses-permission android:name="android.permission.FACTORY_TEST"/>
-
-    <!-- DUMP -->
-    <uses-permission android:name="android.permission.DUMP"/>
-
-    <!-- 停用屏幕锁定 -->
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
-
-    <!-- DIAGNOSTIC -->
-    <uses-permission android:name="android.permission.DIAGNOSTIC"/>
-
-    <!-- DELETE_CACHE_FILES -->
-    <uses-permission android:name="android.permission.DELETE_CACHE_FILES"/>
-
-    <!-- DELETE_PACKAGES -->
-    <uses-permission android:name="android.permission.DELETE_PACKAGES"/>
-
-    <!-- DELIVER_COMPANION_MESSAGES -->
-    <uses-permission android:name="android.permission.DELIVER_COMPANION_MESSAGES"/>
-
-    <!-- CONTROL_LOCATION_UPDATES -->
-    <uses-permission android:name="android.permission.CONTROL_LOCATION_UPDATES"/>
-
-    <!-- 允许接收WLAN多播 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
-
-    <!-- CLEAR_APP_CACHE -->
-    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
-
-    <!-- 连接WLAN网络和断开连接 -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-
-    <!-- 更改网络连接性 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-
-    <!-- CAPTURE_AUDIO_OUTPUT -->
-    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT"/>
-
-    <!-- CHANGE_COMPONENT_ENABLED_STATE -->
-    <uses-permission android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"/>
-
-    <!-- CHANGE_CONFIGURATION -->
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
-
-    <!-- 发送持久广播 -->
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
-
-    <!-- 查看并控制通过系统拨打的电话。 -->
-    <uses-permission android:name="android.permission.CALL_COMPANION_APP"/>
-
-    <!-- CALL_PRIVILEGED -->
-    <uses-permission android:name="android.permission.CALL_PRIVILEGED"/>
-
-    <!-- 拍摄照片和视频 -->
-    <uses-permission android:name="android.permission.CAMERA"/>
-
-    <!-- 拨打电话 -->
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
-
-    <!-- BROADCAST_WAP_PUSH -->
-    <uses-permission android:name="android.permission.BROADCAST_WAP_PUSH"/>
-
-    <!-- BROADCAST_SMS -->
-    <uses-permission android:name="android.permission.BROADCAST_SMS"/>
-
-    <!-- BROADCAST_PACKAGE_REMOVED -->
-    <uses-permission android:name="android.permission.BROADCAST_PACKAGE_REMOVED"/>
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"/>
+    <!-- WRITE_VOICEMAIL -->
+    <uses-permission android:name="com.android.voicemail.permission.WRITE_VOICEMAIL"/>
 
     <application
         android:allowBackup="true"
@@ -623,11 +628,13 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:resizeableActivity="true"
-        android:name=".GlobalApplication">
+        android:name=".GlobalApplication"
+        android:hardwareAccelerated="true">
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
 
             <intent-filter>
 
