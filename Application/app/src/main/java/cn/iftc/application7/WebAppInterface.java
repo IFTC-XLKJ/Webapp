@@ -1,4 +1,4 @@
-package cn.iftc.application;
+package cn.iftc.application7;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -22,7 +22,7 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 import androidx.core.graphics.drawable.IconCompat;
-import cn.iftc.application.BuildConfig;
+import cn.iftc.application7.BuildConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import android.graphics.drawable.Icon;
-import cn.iftc.application.MD5Calculator;
+import cn.iftc.application7.MD5Calculator;
+import android.text.TextUtils;
 
 public class WebAppInterface {
     private Context mContext;
@@ -69,6 +70,10 @@ public class WebAppInterface {
         sendMessage("setStatusBarColor", "", new String[]{colorString});
     }
     @JavascriptInterface
+    public void setNavigationBarColor(String colorString) {
+        sendMessage("setNavigationBarColor", "", new String[]{colorString});
+    }
+    @JavascriptInterface
     public void setStatusBar(String type) {
         sendMessage("setStatusBar", "", new String[]{type});
     }
@@ -81,17 +86,20 @@ public class WebAppInterface {
         sendMessage("showStatusBar", "", new String[]{});
     }
     @JavascriptInterface
-    public void createFile(String filepath) {
+    public boolean createFile(String filepath) {
         File file = new File(filepath);
         try {
             if (!file.exists()) {
                 if (file.getParentFile() != null && !file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
-                file.createNewFile();
+                return file.createNewFile();
+            } else {
+                return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
     @JavascriptInterface
@@ -118,7 +126,7 @@ public class WebAppInterface {
         return os.toByteArray();
     }
     @JavascriptInterface
-    public void writeFile(String filepath, String Base64Content) {
+    public boolean writeFile(String filepath, String Base64Content) {
         byte[] decodedBytes = Base64.decode(Base64Content, Base64.DEFAULT);
         File file = new File(filepath);
         if (!file.exists()) {
@@ -131,8 +139,11 @@ public class WebAppInterface {
         try {
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(decodedBytes);
+            fos.flush();
+            return true;
         } catch ( IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
     @JavascriptInterface
@@ -198,6 +209,26 @@ public class WebAppInterface {
             }
         }
         return result.toString();
+    }
+    @JavascriptInterface
+    public boolean createDir(String dirname) {
+        File directory = new File(dirname);
+        if (!directory.exists()) {
+            boolean result = directory.mkdirs();
+            return result;
+        } else {
+            return true;
+        }
+    }
+    @JavascriptInterface
+    public boolean isHide(String filepath) {
+        File file = new File(filepath);
+        return file.isHidden();
+    }
+    @JavascriptInterface
+    public long lastModified(String filepath) {
+        File file = new File(filepath);
+        return file.lastModified();
     }
     @JavascriptInterface
     public String ContentToBase64(String content) {
@@ -400,6 +431,18 @@ public class WebAppInterface {
     @JavascriptInterface
     public void toApp(String packageName) {
         sendMessage("toApp", "", new String[]{packageName});
+    }
+    @JavascriptInterface
+    public void clearHistory() {
+        sendMessage("clearHistory", "", new String[]{});
+    }
+    @JavascriptInterface
+    public void allowScreenshot(boolean is) {
+        sendMessage("allowScreenshot", "", new String[]{is + ""});
+    }
+    @JavascriptInterface
+    public void openFile(String filePath) {
+        sendMessage("openFile", "", new String[]{filePath});
     }
     @JavascriptInterface
     public void isShortcutExists(String callback) {

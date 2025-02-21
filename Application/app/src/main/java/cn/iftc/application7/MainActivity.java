@@ -1,10 +1,11 @@
-package cn.iftc.application;
+package cn.iftc.application7;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Context;
@@ -34,6 +35,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
+import android.webkit.JavascriptInterface;
+import android.webkit.MimeTypeMap;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebChromeClient.CustomViewCallback;
@@ -45,10 +49,12 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.R;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import cn.iftc.application.WebAppInterface;
+import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -153,35 +159,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     if (this == null) {
                         return null;
                     }
-                    return BitmapFactory.decodeResource(getApplicationContext().getResources(),
-                                                        R.mipmap.ic_launcher);
+                    return BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
                 }
 
                 @Override
-                public void onShowCustomView(View view,
-                                             WebChromeClient.CustomViewCallback callback) {
-                    // if a view already exists then immediately terminate the new one
+                public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
                     if (mCustomView != null) {
                         onHideCustomView();
                         return;
                     }
-
-                    // 1. Stash the current state
                     mCustomView = view;
                     mOriginalSystemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
                     mOriginalOrientation = getRequestedOrientation();
-
-                    // 2. Stash the custom view callback
                     mCustomViewCallback = callback;
-
-                    // 3. Add the custom view to the view hierarchy
                     FrameLayout decor = (FrameLayout) getWindow().getDecorView();
                     decor.addView(mCustomView, new FrameLayout.LayoutParams(
                                       ViewGroup.LayoutParams.MATCH_PARENT,
                                       ViewGroup.LayoutParams.MATCH_PARENT));
-
-
-                    // 4. Change the state of the window
                     getWindow().getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
@@ -194,17 +188,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 @Override
                 public void onHideCustomView() {
-                    // 1. Remove the custom view
                     FrameLayout decor = (FrameLayout) getWindow().getDecorView();
                     decor.removeView(mCustomView);
                     mCustomView = null;
-
-                    // 2. Restore the state to it's original form
                     getWindow().getDecorView()
                         .setSystemUiVisibility(mOriginalSystemUiVisibility);
                     setRequestedOrientation(mOriginalOrientation);
-
-                    // 3. Call the custom view callback
                     mCustomViewCallback.onCustomViewHidden();
                     mCustomViewCallback = null;
 
@@ -225,11 +214,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    // TODO Auto-generated method stub
                     view.loadUrl(url);
                     return true;
                 }
-
             });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -252,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 } else if (type.equals("setStatusBarColor")) {
                     int color = Color.parseColor(message[0]);
                     getWindow().setStatusBarColor(color);
+                } else if (type.equals("setNavigationBarColor")) {
+                    Window window = getWindow();
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.setNavigationBarColor(Color.parseColor(message[0]));
                 } else if (type.equals("setStatusBar")) {
                     int option = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
                     if (message[0].equals("1")) {
@@ -453,35 +444,44 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     if (launchIntent != null) {
                         startActivity(launchIntent);
                     }
-                } else if (type.equals("addShortcuts")) {/*
-                     Intent shortcutIntent = new Intent(mContext, MainActivity.class);
-                     shortcutIntent.setAction(Intent.ACTION_VIEW);
-                     shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                     shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                     String actionName = message[0];
-                     Intent addIntent = new Intent();
-                     addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-                     addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "快捷方式名称");
-                     addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                     Intent.ShortcutIconResource.fromContext(this, R.drawable.ic_shortcut_icon));
-                     addIntent.setAction();
-                     sendBroadcast(addIntent);
-                     getSharedPreferences("app_prefs", MODE_PRIVATE)
-                     .edit()
-                     .putBoolean("shortcut_created", true)
-                     .apply();*/
+                } else if (type.equals("clearHistory")) {
+                    webView.clearHistory();
+                } else if (type.equals("allowScreenshot")) {
+                    boolean is = Boolean.parseBoolean(message[0]);
+                    if (is) {
+                        getWindow().clearFlags(LayoutParams.FLAG_SECURE);
+                    } else {
+                        getWindow().setFlags(LayoutParams.FLAG_SECURE, LayoutParams.FLAG_SECURE);
+                    }
+                } else if (type.equals("openFile")) {
+                    File file = new File(message[0]);
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    String fileExtension = MimeTypeMap.getFileExtensionFromUrl(file.getName());
+                    String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Uri apkUri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        i.setDataAndType(apkUri, mimeType);
+                    } else {
+                        Uri apkUri = Uri.fromFile(file);
+                        i.setDataAndType(apkUri, mimeType);
+                    }
+
+                    try {
+                        startActivity(i);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(mContext, "没有找到可以处理该操作的应用", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         };
         registerReceiver(messageReceiver, new IntentFilter("iftc"));
         handleIntent(getIntent(), getIntent().getAction());
-
     }
 
     private void sendResponse(String callback, ArrayList response) {
         Log.d("resp", response.toString());
-        webView.evaluateJavascript("javascript:try{" + callback + "(" + response.toString() + ")}catch(e){console.log(e)};", null);
-        // webView.evaluateJavascript("javascript:console.log(\"" + callback + " 已完成回调\");", null);
+        webView.evaluateJavascript("javascript:try{" + callback + "(" + response.toString() + ")}catch(e){};", null);
     }
 
     @Override
@@ -674,18 +674,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public class AppInfoUtil {
-
-        /**
-         * 根据包名获取应用信息。
-         *
-         * @param context 上下文
-         * @param packageName 应用的包名
-         * @return 返回包含应用名、版本名、版本号等信息的对象
-         */
         public PackageInfo getAppInfo(Context context, String packageName) {
             PackageManager pm = context.getPackageManager();
             try {
-                // 获取应用的详细信息
                 PackageInfo packageInfo = pm.getPackageInfo(packageName, 0);
                 return packageInfo;
             } catch (PackageManager.NameNotFoundException e) {
@@ -693,14 +684,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return null;
             }
         }
-
-        /**
-         * 获取应用的名字。
-         *
-         * @param context 上下文
-         * @param packageName 应用的包名
-         * @return 应用的名字
-         */
         public String getAppName(Context context, String packageName) {
             PackageManager pm = context.getPackageManager();
             try {
@@ -711,14 +694,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return null;
             }
         }
-
-        /**
-         * 获取应用的版本名称。
-         *
-         * @param context 上下文
-         * @param packageName 应用的包名
-         * @return 版本名称
-         */
         public String getVersionName(Context context, String packageName) {
             PackageManager pm = context.getPackageManager();
             try {
@@ -729,14 +704,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return null;
             }
         }
-
-        /**
-         * 获取应用的版本号。
-         *
-         * @param context 上下文
-         * @param packageName 应用的包名
-         * @return 版本号
-         */
         public int getVersionCode(Context context, String packageName) {
             PackageManager pm = context.getPackageManager();
             try {

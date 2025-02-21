@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.iftc.application">
+    package="cn.iftc.application7">
 
     <!-- ACCEPT_HANDOVER -->
     <uses-permission android:name="android.permission.ACCEPT_HANDOVER"/>
@@ -630,11 +630,22 @@
         android:resizeableActivity="true"
         android:name=".GlobalApplication"
         android:hardwareAccelerated="true">
-
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="cn.iftc.application7.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:launchMode="singleTask"
+            android:configChanges="layoutDirection|smallestScreenSize|screenSize|uiMode|screenLayout|orientation|keyboardHidden|keyboard"
+            android:windowSoftInputMode="adjustResize"
+            android:supportsPictureInPicture="true">
 
             <intent-filter>
 

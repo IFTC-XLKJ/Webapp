@@ -1,4 +1,4 @@
-package cn.iftc.application2;
+package cn.iftc.application7;
 
 import android.app.Activity;
 import android.app.Application;

@@ -1,4 +1,4 @@
-package cn.iftc.application2;
+package cn.iftc.application7;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,31 +7,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.w3c.dom.Element;
 
 public class LocalServer implements Runnable {
 
     private Context context;
-    private String options;
     private static final String TAG = "SimpleFileServer";
     private int PORT = 8081;
     private String ROOT_PATH = "/storage/emulated/0/";
 
     private ServerSocket serverSocket;
 
-    public LocalServer(Context c, int port, String root_path, String ops) {
-        options = ops;
+    public LocalServer(Context c, int port, String root_path) {
         context = c;
         PORT = port;
         ROOT_PATH = root_path;
@@ -52,37 +41,6 @@ public class LocalServer implements Runnable {
                 Log.e(TAG, "错误的接收客户端连接", e);
             }
         }
-    }
-    private ArrayList<String[]> keyPath(String xml) {
-        try {
-            ArrayList r1 = new ArrayList();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(xml));
-            Document document = builder.parse(is);
-            NodeList itemNodes = document.getElementsByTagName("item");
-            for (int i = 0;i < itemNodes.getLength();i ++) {
-                Node itemNode = itemNodes.item(i);
-                Element itemElement = (Element)itemNode;
-                String key  = itemElement.getAttribute("key");
-                if (key == "keyPath") {
-                    NodeList items = itemElement.getElementsByTagName("item");
-                    Node item1 = items.item(0);
-                    Node item2 = items.item(1);
-                    String[] Key = item1.getTextContent().split("\n");
-                    String[] Path = item2.getTextContent().split("\n");
-                    r1.add(0, Key);
-                    r1.add(1, Path);
-                    return r1;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            ArrayList r2 = new ArrayList();
-            return r2;
-        }
-        ArrayList r = new ArrayList();
-        return r;
     }
     private class ClientHandler implements Runnable {
         private Socket clientSocket;
@@ -108,25 +66,26 @@ public class LocalServer implements Runnable {
                 String path = parts[1];
 
                 String decodedFileName = URLDecoder.decode(path.substring(1), "UTF-8");
-                ArrayList r = keyPath(options);
+                WebAppInterface wi = new WebAppInterface(context);
                 File file = new File(ROOT_PATH, decodedFileName);
                 if (!file.isDirectory()) {
                     if (file.exists()) {
                         sendFile(out, file);
                     } else {
-                        send404(out);
+                        File index1File = new File(ROOT_PATH, decodedFileName + ".html");
+                        wi.writeFile("/storage/emulated/0/Android/data/cn.iftc.application/cache/.txt", wi.ContentToBase64(index1File.getPath()));
+                        if (index1File.exists()) {
+                            sendFile(out, index1File);
+                        } else {
+                            send404(out);
+                        }
                     }
                 } else {
                     File indexFile = new File(ROOT_PATH, decodedFileName + "/index.html");
                     if (indexFile.exists()) {
                         sendFile(out, indexFile);
                     } else {
-                        File index1File = new File(ROOT_PATH, decodedFileName + "/index2.html");
-                        if (indexFile.exists()) {
-                            sendFile(out, index1File);
-                        } else {
-                            send404(out);
-                        }
+                        send404(out);
                     }
                 }
 

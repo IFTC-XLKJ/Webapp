@@ -3,6 +3,7 @@ window.b1;
 window.c1;
 window.d1;
 window.e1;
+window.f1;
 onload = () => {
     eruda.init();// 启动Eruda控制台
     console.log(iftc);// 输出所有JavaScript接口，返回一个对象，接口位置在window对象下
@@ -72,6 +73,10 @@ onload = () => {
     a1 = e => {
         a.innerHTML = "环境亮度：" + e[0] + "流明"
     }
+    
+    f1 = e => {
+        b.innerHTML = "重力：" + e[0] + "," + e[1] + ","+ e[2]
+    }
 }
 
 function isVpn(e) {
@@ -90,7 +95,9 @@ function onDeviceLight(e) {
 }
 
 function onGravity(e) {
-    console.log(e[0], e[1], e[2])
+    try {
+        f1(e)
+    } catch (e) {}
 }
 
 function b(e) {
