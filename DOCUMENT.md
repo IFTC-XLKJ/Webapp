@@ -151,3 +151,15 @@ dependencies {
 | --- | --- | --- |
 | text | String | 显示内容 |
 | is | Boolean | 是否长时间显示 |
+## `Base64ToContent`
+接口说明：该接口可以将Base64字符转换成UTF-8内容，与atob有所不同，它能够支持使用Unicode字符，而atob仅支持ASCII字符。
+
+传入参数说明：
+| 参数名 | 参数类型 | 参数说明 |
+| --- | --- | --- |
+| Base64 | String | Base64字符 |
+
+返回参数说明：
+| 参数名 | 参数类型 | 参数说明 |
+| --- | --- | --- |
+| content | String | UTF-8内容 |
