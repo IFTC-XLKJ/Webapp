@@ -119,7 +119,7 @@ dependencies {
 ```
 8. 修改图标<br>
 在`res/mipmap-anydpi-v26`目录下的`ic_launcher`（文件前缀名），文件后缀名只要是图片就行，不支持svg，需要转换成xml（Android专用矢量图），建议使用png
-9. 修改`res/values`目录下的`colors.xml`，颜色值格式：#aarrggbb
+9. 修改`res/values`目录下的`colors.xml`，颜色值格式：`#aarrggbb`
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
