@@ -163,3 +163,15 @@ dependencies {
 | 参数名 | 参数类型 | 参数说明 |
 | --- | --- | --- |
 | content | String | UTF-8内容 |
+##  `ContentToBase64`
+接口说明：该接口可以将UTF-8内容转换成Base64字符，与btoa有所不同，它能够支持使用Unicode字符，而btoa仅支持ASCII字符。
+
+传入参数说明：
+| 参数名 | 参数类型 | 参数说明 |
+| --- | --- | --- |
+| content | String | UTF-8内容 |
+
+返回参数说明：
+| 参数名 | 参数类型 | 参数说明 |
+| --- | --- | --- |
+| Base64 | String | Base64字符 |
