@@ -189,3 +189,7 @@ dependencies {
 | 参数名 | 参数类型 | 参数说明 |
 | --- | --- | --- |
 | is | Boolean | 是否允许 |
+## `toSettings`
+接口说明：该接口可跳转到系统设置。
+## `toAPPInfoPage`
+接口说明：该接口可跳转到应用信息页面。
